@@ -40,5 +40,13 @@ namespace BeelineTest.Test.Resourse
             Assert.True(response.IsValid(schema), "Invalid json schema");
             Assert.True(!data.Equals(0), "Empty data");
         }
+
+        [Test, Description("C000006 GET non-existent resourse")]
+        public void TestGETNonExistentResourse()
+        {
+            JObject response = ResourcesApi.GetResources(maxResourseId + RandomUtil.GetRandomNumber(maxResourseId));
+            Assert.AreEqual(HttpStatusCode.NotFound, ResourcesApi.GetStatusCode(), "Invalid status code");
+            Assert.IsEmpty(response, "Non-empty data");
+        }
     }
 }

@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using BeelineTest.ApiUtils;
 using BeelineTest.Utils;
 using NUnit.Framework;
@@ -16,7 +13,6 @@ namespace BeelineTest.Test.User
     public class GetTest
     {
         private int maxUserIdValue = 12;
-
 
         [Test, Description("C000001 Get list of users")]
         public void TestGetListOfUsers()
@@ -48,6 +44,21 @@ namespace BeelineTest.Test.User
             JObject response = UserApi.GetUsersPerId(maxUserIdValue + RandomUtil.GetRandomNumber(maxUserIdValue));
             Assert.AreEqual(HttpStatusCode.NotFound, UserApi.GetStatusCode(), "Invalid status code");
             Assert.IsEmpty(response, "Non-empty data");
+        }
+
+        [Test, Description("C000007 GET list of users with delay")]
+        public void TestGetListOfUsersWithDelay()
+        {
+            int delayTime = 3;
+            JsonSchema schema = JsonSchema.Parse(@File.ReadAllText("Resources\\GetListOfUsersSchema.json"));
+            int firstTime = DateTime.Now.Second;
+            JObject response = UserApi.GetUsersWithEntryParam($"delay={delayTime}");
+            int secendTime = DateTime.Now.Second;
+            Assert.AreEqual(delayTime, secendTime - firstTime, "Invalid delay time");
+            var data = response["data"].ToArray<object>();
+            Assert.AreEqual(HttpStatusCode.OK, UserApi.GetStatusCode(), "Invalid status code");
+            Assert.True(response.IsValid(schema), "Invalid json schema");
+            Assert.True(data.Length > 0, "Empty data");
         }
     }
 }
