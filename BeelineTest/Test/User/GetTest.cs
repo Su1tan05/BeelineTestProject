@@ -18,6 +18,7 @@ namespace BeelineTest.Test.User
         public void TestGetListOfUsers()
         {
             int pageId = 2;
+            LogUtils.Info("1. Send get request to https://reqres.in/api/users?page=2");
             JsonSchema schema = JsonSchema.Parse(@File.ReadAllText("Resources\\GetListOfUsersSchema.json"));
             JObject response = UserApi.GetUsersWithEntryParam($"page={pageId}");
             var data = response["data"].ToArray<object>();
@@ -30,6 +31,7 @@ namespace BeelineTest.Test.User
         public void TestGetSingleUser()
         {
             int userId = RandomUtil.GetRandomNumber(maxUserIdValue);
+            LogUtils.Info($"1. Send get request to https://reqres.in/api/users/{userId}");
             JsonSchema schema = JsonSchema.Parse(@File.ReadAllText("Resources\\GetSingleUserSchema.json"));
             JObject response = UserApi.GetUsersPerId(userId);
             var data = response["data"].ToObject<object>();
@@ -41,7 +43,9 @@ namespace BeelineTest.Test.User
         [Test, Description("C000003 GET non-existent user")]
         public void TestGETNonExistentUser()
         {
-            JObject response = UserApi.GetUsersPerId(maxUserIdValue + RandomUtil.GetRandomNumber(maxUserIdValue));
+            int userId = maxUserIdValue + RandomUtil.GetRandomNumber(maxUserIdValue);
+            JObject response = UserApi.GetUsersPerId(userId);
+            LogUtils.Info($"1. Send get request to https://reqres.in/api/users/{userId}");
             Assert.AreEqual(HttpStatusCode.NotFound, UserApi.GetStatusCode(), "Invalid status code");
             Assert.IsEmpty(response, "Non-empty data");
         }
@@ -50,6 +54,7 @@ namespace BeelineTest.Test.User
         public void TestGetListOfUsersWithDelay()
         {
             int delayTime = 3;
+            LogUtils.Info($"1. Send get request to https://reqres.in/api/users?delay={delayTime}");
             JsonSchema schema = JsonSchema.Parse(@File.ReadAllText("Resources\\GetListOfUsersSchema.json"));
             int firstTime = DateTime.Now.Second;
             JObject response = UserApi.GetUsersWithEntryParam($"delay={delayTime}");

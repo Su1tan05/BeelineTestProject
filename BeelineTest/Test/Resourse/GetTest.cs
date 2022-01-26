@@ -21,10 +21,11 @@ namespace BeelineTest.Test.Resourse
         [Test, Description("C000004 GET list of resources")]
         public void TestGETListOfResources()
         {
+            LogUtils.Info("1. Send get request to https://reqres.in/api/unknown");
             JObject response = ResourcesApi.GetResources();
             JsonSchema schema = JsonSchema.Parse(@File.ReadAllText("Resources\\GETListOfResourcesSchema.json"));
             var data = response["data"].ToArray<object>();
-            Assert.AreEqual(HttpStatusCode.NotFound, ResourcesApi.GetStatusCode(), "Invalid status code");
+            Assert.AreEqual(HttpStatusCode.OK, ResourcesApi.GetStatusCode(), "Invalid status code");
             Assert.True(response.IsValid(schema), "Invalid json schema");
             Assert.True(data.Length > 0, "Empty data");
         }
@@ -33,10 +34,11 @@ namespace BeelineTest.Test.Resourse
         public void TestGETSingleResources()
         {
             int resourseId = RandomUtil.GetRandomNumber(maxResourseId);
+            LogUtils.Info($"1. Send get request to https://reqres.in/api/unknown/{resourseId}");
             JObject response = ResourcesApi.GetResources(resourseId);
             JsonSchema schema = JsonSchema.Parse(@File.ReadAllText("Resources\\GetSingleResourceSchema.json"));
             var data = response["data"].ToObject<object>();
-            Assert.AreEqual(HttpStatusCode.NotFound, ResourcesApi.GetStatusCode(), "Invalid status code");
+            Assert.AreEqual(HttpStatusCode.OK, ResourcesApi.GetStatusCode(), "Invalid status code");
             Assert.True(response.IsValid(schema), "Invalid json schema");
             Assert.True(!data.Equals(0), "Empty data");
         }
@@ -44,7 +46,9 @@ namespace BeelineTest.Test.Resourse
         [Test, Description("C000006 GET non-existent resourse")]
         public void TestGETNonExistentResourse()
         {
-            JObject response = ResourcesApi.GetResources(maxResourseId + RandomUtil.GetRandomNumber(maxResourseId));
+            int resourseId = maxResourseId + RandomUtil.GetRandomNumber(maxResourseId);
+            JObject response = ResourcesApi.GetResources(resourseId);
+            LogUtils.Info($"1. Send get request to https://reqres.in/api/unknown/{resourseId}");
             Assert.AreEqual(HttpStatusCode.NotFound, ResourcesApi.GetStatusCode(), "Invalid status code");
             Assert.IsEmpty(response, "Non-empty data");
         }
